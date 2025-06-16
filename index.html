@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learn Data Analysis</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+      color: #333;
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, #222, #444);
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.2em;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      background: #333;
+      padding: 15px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    nav button {
+      background: #fff;
+      color: #333;
+      margin: 0 10px;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    nav button:hover {
+      background: #ddd;
+      transform: translateY(-2px);
+    }
+    nav button.active-btn {
+      background: #4CAF50;
+      color: white;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .section {
+      display: none;
+      padding: 30px;
+      background: white;
+      margin: 20px 0;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .active {
+      display: block;
+    }
+    h2 {
+      color: #2c3e50;
+      border-bottom: 2px solid #4CAF50;
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+    h3 {
+      color: #34495e;
+      margin-top: 25px;
+    }
+    ul, ol {
+      padding-left: 25px;
+    }
+    li {
+      margin-bottom: 10px;
+    }
+    .interactive-box {
+      background: #f9f9f9;
+      padding: 20px;
+      border-left: 4px solid #4CAF50;
+      margin: 20px 0;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+    .interactive-box:hover {
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transform: translateY(-3px);
+    }
+    .chart-container {
+      width: 100%;
+      height: 400px;
+      margin: 30px 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .card h3 {
+      color: #4CAF50;
+      margin-top: 0;
+    }
+    .tool-icon {
+      font-size: 2em;
+      color: #4CAF50;
+      margin-bottom: 10px;
+    }
+    .quiz {
+      background: #e8f5e9;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    .quiz-question {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .quiz-option {
+      margin: 5px 0;
+      padding: 8px;
+      background: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .quiz-option:hover {
+      background: #c8e6c9;
+    }
+    .correct {
+      background: #a5d6a7;
+    }
+    .incorrect {
+      background: #ffcdd2;
+    }
+    .feedback {
+      margin-top: 10px;
+      font-style: italic;
+      display: none;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    .data-table th, .data-table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    .data-table th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .data-table tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    .data-table tr:hover {
+      background-color: #ddd;
+    }
+    .btn {
+      display: inline-block;
+      background: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 16px;
+      margin: 10px 0;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background: #45a049;
+    }
+    .code-block {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 15px;
+      border-radius: 5px;
+      font-family: 'Courier New', Courier, monospace;
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+    .keyword {
+      color: #f92672;
+    }
+    .function {
+      color: #66d9ef;
+    }
+    .string {
+      color: #e6db74;
+    }
+    .comment {
+      color: #75715e;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><i class="fas fa-chart-line"></i> Interactive Learning: Data Analysis</h1>
+    <p>Master the art of extracting insights from data</p>
+  </header>
+
+  <nav>
+    <button onclick="showSection('what')" class="active-btn">What is DA?</button>
+    <button onclick="showSection('types')">Types of Data</button>
+    <button onclick="showSection('process')">Analysis Process</button>
+    <button onclick="showSection('techniques')">Techniques</button>
+    <button onclick="showSection('tools')">Tools</button>
+    <button onclick="showSection('applications')">Applications</button>
+  </nav>
+
+  <div class="container">
+    <section id="what" class="section active">
+      <h2>1. What is Data Analysis?</h2>
+      <p>Data Analysis is the systematic process of inspecting, cleaning, transforming, and modeling data to discover useful information, draw conclusions, and support decision-making. It involves applying statistical and logical techniques to describe and illustrate, condense and recap, and evaluate data.</p>
+      
+      <div class="interactive-box">
+        <h3>Why is Data Analysis Important?</h3>
+        <ul>
+          <li><strong>Informed Decision Making:</strong> Helps organizations make evidence-based decisions rather than relying on intuition.</li>
+          <li><strong>Identifying Trends:</strong> Reveals patterns and trends that might otherwise go unnoticed.</li>
+          <li><strong>Problem Solving:</strong> Provides insights to solve complex business problems.</li>
+          <li><strong>Risk Management:</strong> Helps in assessing and mitigating potential risks.</li>
+          <li><strong>Performance Improvement:</strong> Identifies areas for improvement in processes and operations.</li>
+        </ul>
+      </div>
+      
+      <h3>Key Components of Data Analysis</h3>
+      <div class="grid">
+        <div class="card">
+          <h3><i class="fas fa-database"></i> Data Collection</h3>
+          <p>Gathering data from various sources including databases, APIs, surveys, and sensors.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-broom"></i> Data Cleaning</h3>
+          <p>Identifying and correcting errors, handling missing values, and removing inconsistencies.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-project-diagram"></i> Data Transformation</h3>
+          <p>Converting data into suitable formats for analysis through normalization and aggregation.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-chart-bar"></i> Data Modeling</h3>
+          <p>Applying statistical models and machine learning algorithms to extract insights.</p>
+        </div>
+      </div>
+      
+      <div class="chart-container">
+        <canvas id="importanceChart"></canvas>
+      </div>
+      
+      <div class="quiz">
+        <div class="quiz-question">What is the primary purpose of data analysis?</div>
+        <div class="quiz-option" onclick="checkAnswer(this, 'correct')">To extract meaningful insights from data</div>
+        <div class="quiz-option" onclick="checkAnswer(this, 'incorrect')">To collect as much data as possible</div>
+        <div class="quiz-option" onclick="checkAnswer(this, 'incorrect')">To create beautiful charts</div>
+        <div class="quiz-option" onclick="checkAnswer(this, 'incorrect')">To store data efficiently</div>
+        <div class="feedback" id="feedback1">Correct! The main goal of data analysis is to extract meaningful insights that can inform decisions.</div>
+      </div>
+    </section>
+
+    <section id="types" class="section">
+      <h2>2. Types of Data</h2>
+      <p>Understanding different data types is crucial because the type of data determines the appropriate analysis techniques and visualizations.</p>
+      
+      <div class="interactive-box">
+        <h3>Qualitative (Categorical) Data</h3>
+        <p>Data that can be categorized but not measured numerically.</p>
+        <ul>
+          <li><strong>Nominal:</strong> Categories with no inherent order (e.g., colors, gender, country names)</li>
+          <li><strong>Ordinal:</strong> Categories with a meaningful order but unknown differences between categories (e.g., education levels, customer satisfaction ratings)</li>
+        </ul>
+        
+        <div class="chart-container" style="height: 300px;">
+          <canvas id="qualitativeChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="interactive-box">
+        <h3>Quantitative (Numerical) Data</h3>
+        <p>Data that can be measured and expressed numerically.</p>
+        <ul>
+          <li><strong>Discrete:</strong> Countable numbers with gaps between values (e.g., number of students in a class, cars in a parking lot)</li>
+          <li><strong>Continuous:</strong> Measurable values that can take any value within a range (e.g., temperature, height, weight)</li>
+        </ul>
+        
+        <div class="chart-container" style="height: 300px;">
+          <canvas id="quantitativeChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="interactive-box">
+        <h3>Other Data Types</h3>
+        <ul>
+          <li><strong>Time Series Data:</strong> Data points collected at regular time intervals (e.g., stock prices, temperature readings)</li>
+          <li><strong>Text Data:</strong> Unstructured textual information (e.g., customer reviews, social media posts)</li>
+          <li><strong>Spatial Data:</strong> Data related to geographic locations (e.g., GPS coordinates, maps)</li>
+          <li><strong>Image Data:</strong> Visual information (e.g., photographs, medical scans)</li>
+        </ul>
+      </div>
+      
+      <div class="quiz">
+        <div class="quiz-question">Which of these is an example of ordinal data?</div>
+        <div class="quiz-option" onclick="checkAnswer(this, 'incorrect')">Hair color (blonde, brunette, red)</div>
+        <div class="quiz-option" onclick="checkAnswer(this, 'correct')">Education level (high school, bachelor's, master's)</div>
+        <div class="quiz-option" onclick="checkAnswer(this, 'incorrect')">Number of children in a family</div>
+        <div class="quiz-option" onclick="checkAnswer(this, 'incorrect')">Temperature in Celsius</div>
+        <div class="feedback" id="feedback2">Correct! Education levels have a meaningful order (high school < bachelor's < master's), making them ordinal data.</div>
+      </div>
+    </section>
+
+    <section id="process" class="section">
+      <h2>3. The Data Analysis Process</h2>
+      <p>A structured approach to analyzing data ensures reliable and actionable results. Here's the complete data analysis lifecycle:</p>
+      
+      <ol>
+        <li><strong>Define the Problem:</strong> Clearly articulate the business problem or question you're trying to answer.</li>
+        <li><strong>Collect Data:</strong> Gather relevant data from various sources (databases, APIs, surveys, etc.).</li>
+        <li><strong>Clean the Data:</strong> Handle missing values, remove duplicates, correct inconsistencies.</li>
+        <li><strong>Explore and Visualize:</strong> Perform exploratory data analysis (EDA) to understand patterns and relationships.</li>
+        <li><strong>Analyze the Data:</strong> Apply appropriate statistical methods and models.</li>
+        <li><strong>Interpret & Communicate:</strong> Translate findings into actionable insights and present them effectively.</li>
+        <li><strong>Make Data-Driven Decisions:</strong> Implement changes based on your analysis.</li>
+      </ol>
+      
+      <div class="interactive-box">
+        <h3>Data Cleaning in Detail</h3>
+        <p>Data cleaning often takes 60-80% of the analysis time. Here are common issues and solutions:</p>
+        <table class="data-table">
+          <tr>
+            <th>Issue</th>
+            <th>Description</th>
+            <th>Solution</th>
+          </tr>
+          <tr>
+            <td>Missing Values</td>
+            <td>Empty or null values in the dataset</td>
+            <td>Imputation (mean, median) or removal</td>
+          </tr>
+          <tr>
+            <td>Outliers</td>
+            <td>Extreme values that distort analysis</td>
+            <td>Statistical detection and treatment</td>
+          </tr>
+          <tr>
+            <td>Inconsistent Formats</td>
+            <td>Same data in different formats (e.g., dates)</td>
+            <td>Standardization</td>
+          </tr>
+          <tr>
+            <td>Duplicate Records</td>
+            <td>Identical or nearly identical entries</td>
+            <td>Identification and removal</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="chart-container">
+        <div id="processSankey" style="height: 500px;"></div>
+      </div>
+      
+      <div class="interactive-box">
+        <h3>Exploratory Data Analysis (EDA)</h3>
+        <p>EDA helps you understand your data through summary statistics and visualizations:</p>
+        <div class="grid">
+          <div class="card">
+            <h4>Summary Statistics</h4>
+            <ul>
+              <li>Mean, median, mode</li>
+              <li>Standard deviation</li>
+              <li>Minimum, maximum</li>
+              <li>Quartiles</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>Visualizations</h4>
+            <ul>
+              <li>Histograms</li>
+              <li>Box plots</li>
+              <li>Scatter plots</li>
+              <li>Correlation matrices</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <canvas id="edaChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section id="techniques" class="section">
+      <h2>4. Common Techniques in Data Analysis</h2>
+      
+      <div class="grid">
+        <div class="card">
+          <h3><i class="fas fa-calculator"></i> Descriptive Statistics</h3>
+          <p>Summarizing and describing the main features of a dataset:</p>
+          <ul>
+            <li>Measures of central tendency (mean, median, mode)</li>
+            <li>Measures of dispersion (range, variance, standard deviation)</li>
+            <li>Percentiles and quartiles</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-project-diagram"></i> Inferential Statistics</h3>
+          <p>Drawing conclusions about populations from samples:</p>
+          <ul>
+            <li>Hypothesis testing (t-tests, ANOVA)</li>
+            <li>Confidence intervals</li>
+            <li>Chi-square tests</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-chart-line"></i> Regression Analysis</h3>
+          <p>Examining relationships between variables:</p>
+          <ul>
+            <li>Linear regression</li>
+            <li>Logistic regression</li>
+            <li>Multiple regression</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-clock"></i> Time Series Analysis</h3>
+          <p>Analyzing data points collected over time:</p>
+          <ul>
+            <li>Trend analysis</li>
+            <li>Seasonality detection</li>
+            <li>Forecasting (ARIMA, Exponential Smoothing)</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="interactive-box">
+        <h3>Correlation vs. Causation</h3>
+        <p>One of the most important distinctions in data analysis:</p>
+        <div class="chart-container">
+          <canvas id="correlationChart"></canvas>
+        </div>
+        <p><strong>Correlation</strong> measures the degree to which two variables move in relation to each other. <strong>Causation</strong> implies that one event is the result of the occurrence of the other event.</p>
+      </div>
+      
+      <div class="interactive-box">
+        <h3>Hypothesis Testing Example</h3>
+        <p>Let's test whether a new teaching method improves test scores (α = 0.05):</p>
+        <div class="chart-container">
+          <canvas id="hypothesisChart"></canvas>
+        </div>
+        <button class="btn" onclick="runHypothesisTest()">Run Hypothesis Test</button>
+        <div id="testResult" style="margin-top: 15px; font-weight: bold;"></div>
+      </div>
+      
+      <div class="code-block">
+        <span class="keyword">import</span> pandas <span class="keyword">as</span> pd<br>
+        <span class="keyword">import</span> numpy <span class="keyword">as</span> np<br>
+        <span class="keyword">from</span> scipy <span class="keyword">import</span> stats<br><br>
+        
+        <span class="comment"># Sample data: test scores before and after new method</span><br>
+        before = np.array([72, 65, 68, 75, 70, 71, 69, 74, 68, 72])<br>
+        after = np.array([75, 70, 72, 78, 74, 76, 73, 77, 71, 75])<br><br>
+        
+        <span class="comment"># Paired t-test</span><br>
+        t_stat, p_value = stats.ttest_rel(after, before)<br>
+        print(<span class="string">f"t-statistic: {t_stat:.3f}, p-value: {p_value:.4f}"</span>)<br><br>
+        
+        <span class="keyword">if</span> p_value < 0.05:<br>
+        &nbsp;&nbsp;print(<span class="string">"Reject null hypothesis: Significant improvement"</span>)<br>
+        <span class="keyword">else</span>:<br>
+        &nbsp;&nbsp;print(<span class="string">"Fail to reject null hypothesis: No significant improvement"</span>)
+      </div>
+    </section>
+
+    <section id="tools" class="section">
+      <h2>5. Tools for Data Analysis</h2>
+      
+      <div class="grid">
+        <div class="card">
+          <div class="tool-icon"><i class="fas fa-file-excel"></i></div>
+          <h3>Excel/Google Sheets</h3>
+          <p>Great for quick analysis, pivot tables, and basic visualizations. Ideal for small datasets and business users.</p>
+          <ul>
+            <li>Pivot tables</li>
+            <li>Basic statistical functions</li>
+            <li>Conditional formatting</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="tool-icon"><i class="fab fa-python"></i></div>
+          <h3>Python</h3>
+          <p>Powerful programming language with extensive data analysis libraries.</p>
+          <ul>
+            <li>Pandas (data manipulation)</li>
+            <li>NumPy (numerical computing)</li>
+            <li>Matplotlib/Seaborn (visualization)</li>
+            <li>Scikit-learn (machine learning)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="tool-icon"><i class="fas fa-registered"></i></div>
+          <h3>R</h3>
+          <p>Statistical programming language designed for data analysis.</p>
+          <ul>
+            <li>dplyr (data manipulation)</li>
+            <li>ggplot2 (visualization)</li>
+            <li>Shiny (interactive dashboards)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="tool-icon"><i class="fas fa-database"></i></div>
+          <h3>SQL</h3>
+          <p>Essential for working with relational databases and large datasets.</p>
+          <ul>
+            <li>Data querying</li>
+            <li>Aggregation</li>
+            <li>Joins and subqueries</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="tool-icon"><i class="fas fa-chart-pie"></i></div>
+          <h3>Power BI/Tableau</h3>
+          <p>Business intelligence tools for creating interactive dashboards.</p>
+          <ul>
+            <li>Drag-and-drop interface</li>
+            <li>Real-time data connections</li>
+            <li>Advanced visualizations</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="tool-icon"><i class="fas fa-brain"></i></div>
+          <h3>Machine Learning</h3>
+          <p>Advanced techniques for predictive modeling.</p>
+          <ul>
+            <li>Classification</li>
+            <li>Regression</li>
+            <li>Clustering</li>
+            <li>Neural networks</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="interactive-box">
+        <h3>Tool Popularity Over Time</h3>
+        <div class="chart-container">
+          <canvas id="toolsChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="quiz">
+        <div class="quiz-question">Which tool would be most appropriate for analyzing a 10 million row dataset stored in a relational database?</div>
+        <div class="quiz-option" onclick="checkAnswer(this, 'incorrect')">Excel</div>
+        <div class="quiz-option" onclick="checkAnswer(this, 'correct')">SQL with Python/R</div>
+        <div class="quiz-option" onclick="checkAnswer(this, 'incorrect')">Google Sheets</div>
+        <div class="quiz-option" onclick="checkAnswer(this, 'incorrect')">Tableau alone</div>
+        <div class="feedback" id="feedback3">Correct! For large datasets in relational databases, SQL is essential for efficient querying, combined with Python or R for analysis.</div>
+      </div>
+    </section>
+
+    <section id="applications" class="section">
+      <h2>6. Real-World Applications</h2>
+      
+      <div class="grid">
+        <div class="card">
+          <h3><i class="fas fa-shopping-cart"></i> Retail</h3>
+          <ul>
+            <li>Customer segmentation</li>
+            <li>Market basket analysis</li>
+            <li>Demand forecasting</li>
+            <li>Price optimization</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-heartbeat"></i> Healthcare</h3>
+          <ul>
+            <li>Disease prediction</li>
+            <li>Drug effectiveness</li>
+            <li>Patient readmission risk</li>
+            <li>Medical image analysis</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-money-bill-wave"></i> Finance</h3>
+          <ul>
+            <li>Credit scoring</li>
+            <li>Fraud detection</li>
+            <li>Algorithmic trading</li>
+            <li>Risk management</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-graduation-cap"></i> Education</h3>
+          <ul>
+            <li>Student performance analysis</li>
+            <li>Dropout prediction</li>
+            <li>Curriculum optimization</li>
+            <li>Learning analytics</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="interactive-box">
+        <h3>Case Study: Customer Churn Prediction</h3>
+        <p>Let's explore a telecom company trying to predict which customers might leave (churn):</p>
+        
+        <div class="chart-container">
+          <canvas id="churnChart"></canvas>
+        </div>
+        
+        <div class="grid" style="margin-top: 20px;">
+          <div class="card">
+            <h4>Key Features</h4>
+            <ul>
+              <li>Monthly charges</li>
+              <li>Contract type</li>
+              <li>Tenure (months with company)</li>
+              <li>Internet service type</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>Model Performance</h4>
+            <ul>
+              <li>Accuracy: 82%</li>
+              <li>Precision: 78%</li>
+              <li>Recall: 75%</li>
+              <li>ROC AUC: 0.85</li>
+            </ul>
+          </div>
+        </div>
+        
+        <button class="btn" onclick="showFeatureImportance()">Show Feature Importance</button>
+        <div class="chart-container" id="featureImportance" style="display: none;">
+          <canvas id="importanceChart2"></canvas>
+        </div>
+      </div>
+      
+      <div class="interactive-box">
+        <h3>Data Analysis in Action: COVID-19 Dashboard</h3>
+        <div class="chart-container">
+          <div id="covidChart" style="height: 500px;"></div>
+        </div>
+        <p>This interactive dashboard shows how data analysis helped track and understand the pandemic's progression.</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Section navigation
+    function showSection(id) {
+      const sections = document.querySelectorAll('.section');
+      const buttons = document.querySelectorAll('nav button');
+      
+      sections.forEach(section => section.classList.remove('active'));
+      buttons.forEach(btn => btn.classList.remove('active-btn'));
+      
+      document.getElementById(id).classList.add('active');
+      event.currentTarget.classList.add('active-btn');
+      
+      // Scroll to top when changing sections
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Re-render charts when their section becomes active
+      if (id === 'what') renderImportanceChart();
+      if (id === 'types') {
+        renderQualitativeChart();
+        renderQuantitativeChart();
+      }
+      if (id === 'process') renderProcessSankey();
+      if (id === 'techniques') {
+        renderCorrelationChart();
+        renderHypothesisChart();
+      }
+      if (id === 'tools') renderToolsChart();
+      if (id === 'applications') {
+        renderChurnChart();
+        renderCovidChart();
+      }
+    }
+    
+    // Quiz functionality
+    function checkAnswer(element, result) {
+      const options = element.parentElement.querySelectorAll('.quiz-option');
+      const feedback = element.parentElement.querySelector('.feedback');
+      
+      options.forEach(opt => {
+        opt.style.pointerEvents = 'none'; // Disable further clicks
+        if (opt === element) {
+          opt.classList.add(result);
+        }
+      });
+      
+      feedback.style.display = 'block';
+    }
+    
+    // Chart 1: Importance of Data Analysis
+    function renderImportanceChart() {
+      const ctx = document.getElementById('importanceChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Business Decisions', 'Cost Reduction', 'Customer Insights', 'Risk Management', 'Process Improvement'],
+          datasets: [{
+            label: 'Impact Level (1-10)',
+            data: [9.2, 8.5, 8.8, 8.3, 8.0],
+            backgroundColor: [
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(255, 99, 132, 0.7)',
+              'rgba(75, 192, 192, 0.7)',
+              'rgba(255, 159, 64, 0.7)',
+              'rgba(153, 102, 255, 0.7)'
+            ],
+            borderColor: [
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 99, 132, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(255, 159, 64, 1)',
+              'rgba(153, 102, 255, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 10,
+              title: {
+                display: true,
+                text: 'Importance Score (1-10)'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Application Area'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'The Impact of Data Analysis Across Different Areas',
+              font: {
+                size: 16
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.dataset.label}: ${context.raw}`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    // Chart 2: Qualitative Data
+    function renderQualitativeChart() {
+      const ctx = document.getElementById('qualitativeChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+          datasets: [{
+            label: 'Favorite Colors',
+            data: [12, 19, 3, 5, 2, 3],
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.7)',
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(255, 206, 86, 0.7)',
+              'rgba(75, 192, 192, 0.7)',
+              'rgba(153, 102, 255, 0.7)',
+              'rgba(255, 159, 64, 0.7)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Example of Qualitative (Categorical) Data: Favorite Colors',
+              font: {
+                size: 14
+              }
+            },
+            legend: {
+              position: 'right'
+            }
+          }
+        }
+      });
+    }
+    
+    // Chart 3: Quantitative Data
+    function renderQuantitativeChart() {
+      const ctx = document.getElementById('quantitativeChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['18-24', '25-34', '35-44', '45-54', '55-64', '65+'],
+          datasets: [{
+            label: 'Number of Customers',
+            data: [45, 60, 42, 35, 28, 20],
+            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Number of Customers'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Age Groups'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Example of Quantitative (Numerical) Data: Customer Age Distribution',
+              font: {
+                size: 14
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    // Chart 4: Process Sankey Diagram
+    function renderProcessSankey() {
+      const data = {
+        type: "sankey",
+        orientation: "h",
+        node: {
+          pad: 15,
+          thickness: 30,
+          line: {
+            color: "black",
+            width: 0.5
+          },
+          label: ["Define Problem", "Collect Data", "Clean Data", "Explore Data", 
+                  "Analyze Data", "Interpret Results", "Make Decisions", "Outcomes"],
+          color: ["#4CAF50", "#2196F3", "#FF9800", "#9C27B0", 
+                 "#3F51B5", "#009688", "#FF5722", "#607D8B"]
+        },
+        link: {
+          source: [0, 1, 2, 3, 4, 5, 6],
+          target: [1, 2, 3, 4, 5, 6, 7],
+          value: [10, 8, 15, 12, 10, 8, 10],
+          color: ["rgba(33, 150, 243, 0.3)", "rgba(255, 152, 0, 0.3)", 
+                 "rgba(156, 39, 176, 0.3)", "rgba(63, 81, 181, 0.3)", 
+                 "rgba(0, 150, 136, 0.3)", "rgba(255, 87, 34, 0.3)", 
+                 "rgba(96, 125, 139, 0.3)"]
+        }
+      };
+      
+      const layout = {
+        title: "Data Analysis Process Flow",
+        font: {
+          size: 12
+        },
+        margin: {
+          t: 50,
+          l: 0,
+          r: 0,
+          b: 0
+        }
+      };
+      
+      Plotly.newPlot('processSankey', [data], layout);
+    }
+    
+    // Chart 5: Correlation vs Causation
+    function renderCorrelationChart() {
+      const ctx = document.getElementById('correlationChart').getContext('2d');
+      
+      // Generate random but correlated data
+      function generateData(pointCount, correlation) {
+        const points = [];
+        for (let i = 0; i < pointCount; i++) {
+          const x = Math.random() * 10;
+          const y = x * correlation + (Math.random() * 4 - 2);
+          points.push({x, y});
+        }
+        return points;
+      }
+      
+      const positiveCorrelation = generateData(50, 0.8);
+      const negativeCorrelation = generateData(50, -0.7);
+      const noCorrelation = generateData(50, 0);
+      
+      new Chart(ctx, {
+        type: 'scatter',
+        data: {
+          datasets: [
+            {
+              label: 'Positive Correlation (r ≈ 0.8)',
+              data: positiveCorrelation,
+              backgroundColor: 'rgba(75, 192, 192, 0.7)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              pointRadius: 6
+            },
+            {
+              label: 'Negative Correlation (r ≈ -0.7)',
+              data: negativeCorrelation,
+              backgroundColor: 'rgba(255, 99, 132, 0.7)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              pointRadius: 6
+            },
+            {
+              label: 'No Correlation (r ≈ 0)',
+              data: noCorrelation,
+              backgroundColor: 'rgba(201, 203, 207, 0.7)',
+              borderColor: 'rgba(201, 203, 207, 1)',
+              pointRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Variable X'
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Variable Y'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Correlation vs. Causation: Three Different Relationships',
+              font: {
+                size: 16
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.dataset.label}: (${context.parsed.x.toFixed(1)}, ${context.parsed.y.toFixed(1)})`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    // Chart 6: Hypothesis Testing
+    function renderHypothesisChart() {
+      const ctx = document.getElementById('hypothesisChart').getContext('2d');
+      
+      // Sample data - test scores before and after
+      const beforeScores = [72, 65, 68, 75, 70, 71, 69, 74, 68, 72];
+      const afterScores = [75, 70, 72, 78, 74, 76, 73, 77, 71, 75];
+      
+      new Chart(ctx, {
+        type: 'boxplot',
+        data: {
+          labels: ['Before New Method', 'After New Method'],
+          datasets: [{
+            data: [beforeScores, afterScores],
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+            outlierColor: '#FF0000',
+            padding: 10,
+            itemRadius: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Test Scores Before and After New Teaching Method',
+              font: {
+                size: 16
+              }
+            },
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              title: {
+                display: true,
+                text: 'Test Score'
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    // Run hypothesis test
+    function runHypothesisTest() {
+      // Simulate a t-test result
+      const pValue = 0.012; // This would normally be calculated
+      const resultElement = document.getElementById('testResult');
+      
+      if (pValue < 0.05) {
+        resultElement.innerHTML = `p-value = ${pValue.toFixed(3)} < 0.05 → <span style="color:green">Reject null hypothesis: Significant improvement!</span>`;
+      } else {
+        resultElement.innerHTML = `p-value = ${pValue.toFixed(3)} ≥ 0.05 → <span style="color:red">Fail to reject null hypothesis: No significant improvement</span>`;
+      }
+    }
+    
+    // Chart 7: Tools Popularity
+    function renderToolsChart() {
+      const ctx = document.getElementById('toolsChart').getContext('2d');
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023'],
+          datasets: [
+            {
+              label: 'Python',
+              data: [30, 35, 45, 55, 65, 75, 82, 85, 88],
+              borderColor: 'rgba(54, 162, 235, 1)',
+              backgroundColor: 'rgba(54, 162, 235, 0.1)',
+              tension: 0.3,
+              fill: true
+            },
+            {
+              label: 'R',
+              data: [60, 62, 65, 63, 58, 55, 52, 50, 48],
+              borderColor: 'rgba(255, 99, 132, 1)',
+              backgroundColor: 'rgba(255, 99, 132, 0.1)',
+              tension: 0.3,
+              fill: true
+            },
+            {
+              label: 'SQL',
+              data: [75, 76, 77, 78, 79, 80, 81, 82, 83],
+              borderColor: 'rgba(75, 192, 192, 1)',
+              backgroundColor: 'rgba(75, 192, 192, 0.1)',
+              tension: 0.3,
+              fill: true
+            },
+            {
+              label: 'Excel',
+              data: [85, 84, 83, 82, 81, 80, 79, 78, 77],
+              borderColor: 'rgba(153, 102, 255, 1)',
+              backgroundColor: 'rgba(153, 102, 255, 0.1)',
+              tension: 0.3,
+              fill: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Popularity of Data Analysis Tools Over Time',
+              font: {
+                size: 16
+              }
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false
+            }
+          },
+          scales: {
+            y: {
+              title: {
+                display: true,
+                text: 'Popularity Score (0-100)'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Year'
+              }
+            }
+          },
+          interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
+          }
+        }
+      });
+    }
+    
+    // Chart 8: Churn Analysis
+    function renderChurnChart() {
+      const ctx = document.getElementById('churnChart').getContext('2d');
+      
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Stayed', 'Churned'],
+          datasets: [{
+            data: [73, 27],
+            backgroundColor: [
+              'rgba(75, 192, 192, 0.7)',
+              'rgba(255, 99, 132, 0.7)'
+            ],
+            borderColor: [
+              'rgba(75, 192, 192, 1)',
+              'rgba(255, 99, 132, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Customer Churn Distribution',
+              font: {
+                size: 16
+              }
+            },
+            legend: {
+              position: 'right'
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.label}: ${context.raw}%`;
+                }
+              }
+            }
+          },
+          cutout: '70%'
+        }
+      });
+    }
+    
+    // Show feature importance
+    function showFeatureImportance() {
+      const container = document.getElementById('featureImportance');
+      container.style.display = 'block';
+      
+      const ctx = document.getElementById('importanceChart2').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Contract Type', 'Monthly Charges', 'Tenure', 'Internet Service', 'Payment Method'],
+          datasets: [{
+            label: 'Feature Importance',
+            data: [0.42, 0.35, 0.28, 0.18, 0.12],
+            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 0.5,
+              title: {
+                display: true,
+                text: 'Importance Score'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Feature'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Feature Importance in Churn Prediction Model',
+              font: {
+                size: 16
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    // Chart 9: COVID-19 Dashboard
+    function renderCovidChart() {
+      // Sample COVID-19 data (simplified)
+      const dates = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const cases = [100, 500, 5000, 25000, 60000, 90000, 120000, 150000, 180000, 200000, 220000, 240000];
+      const deaths = [2, 10, 200, 1500, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000];
+      const recovered = [50, 200, 2000, 10000, 30000, 50000, 80000, 110000, 140000, 170000, 200000, 230000];
+      
+      const trace1 = {
+        x: dates,
+        y: cases,
+        name: 'Cases',
+        type: 'bar',
+        marker: {
+          color: 'rgba(54, 162, 235, 0.7)'
+        }
+      };
+      
+      const trace2 = {
+        x: dates,
+        y: deaths,
+        name: 'Deaths',
+        type: 'bar',
+        marker: {
+          color: 'rgba(255, 99, 132, 0.7)'
+        }
+      };
+      
+      const trace3 = {
+        x: dates,
+        y: recovered,
+        name: 'Recovered',
+        type: 'scatter',
+        mode: 'lines+markers',
+        line: {
+          color: 'rgba(75, 192, 192, 1)',
+          width: 3
+        },
+        marker: {
+          color: 'rgba(75, 192, 192, 1)',
+          size: 8
+        }
+      };
+      
+      const layout = {
+        title: 'COVID-19 Cases Over Time (Example Data)',
+        xaxis: {
+          title: 'Month'
+        },
+        yaxis: {
+          title: 'Number of People'
+        },
+        barmode: 'group',
+        hovermode: 'closest'
+      };
+      
+      Plotly.newPlot('covidChart', [trace1, trace2, trace3], layout);
+    }
+    
+    // Initialize charts on page load
+    window.onload = function() {
+      renderImportanceChart();
+    };
+  </script>
+</body>
+</html>
